@@ -1,15 +1,17 @@
 %% Read
-tidy 
+tidy
 
 celldata = readtable('~/data/exampledata2/eg_celldata.csv');
 pointdata = readtable('~/data/exampledata2/eg_pointdata.csv');
-
+%%
 scalars = celldata.Properties.VariableNames{...
     contains(lower(celldata.Properties.VariableNames), 'scalars')};
 
 f = [celldata.PointIndex0 celldata.PointIndex1 celldata.PointIndex2];
 v = [pointdata.Points_0 pointdata.Points_1 pointdata.Points_2];
 c = celldata.(scalars);%./max(celldata.(scalars)(:));
+
+idx = celldata.CellID + 1;
 
 F = f+1;
 S.Vertices = v;
@@ -28,6 +30,7 @@ axis equal;
 view(-166, 6.35)
 
 %% Get Otsus
+
 ot1 = multithresh(c(c>0));
 cq1 = colorquantise(c,ot1);
 ot2 = multithresh(c(c>0), 2);
@@ -36,8 +39,10 @@ ots = multithresh(c(c>ot1), 2);
 cqs = colorquantise(c,ots);
 
 S1 = S;
-S2 = S; 
+S2 = S;
 Ss = S;
+
+S3 = S;
 
 S1.CData = cq1;
 S2.CData = cq2;
@@ -52,6 +57,7 @@ figure(2)
 p2 = patch(S2);
 title('Two thresholds')
 view(-166, 6.35)
+
 
 figure(5)
 ps = patch(Ss);
@@ -72,5 +78,18 @@ c = cross(a, b, 2);
 area = 1/2 * sum(sqrt(sum(c.^2, 2)));
 fprintf('\nThe surface area is %f\n\n', area);
 
+%% face adjacency
 
+for fx=1:size(F,1)
+    face = F(fx,:);
+    F(fx,:) = [-1 -1 -1];
+    for ix=1:length(face)
+        bF = F==face(ix);
+        bF = sum(bF, 2);
+        wx=find(bF);
+        qq(fx,wx) = qq(fx,wx)+1;
+        qq(wx,fx) = qq(wx,fx)+1;
+    end
+    F(fx,:) = face;
+end
 

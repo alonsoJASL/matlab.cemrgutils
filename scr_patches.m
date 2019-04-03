@@ -79,8 +79,9 @@ area = 1/2 * sum(sqrt(sum(c.^2, 2)));
 fprintf('\nThe surface area is %f\n\n', area);
 
 %% face adjacency
+qq=speye(size(celldata,1));
 
-for fx=1:size(F,1)
+for fx=1:1000%size(F,1)
     face = F(fx,:);
     F(fx,:) = [-1 -1 -1];
     for ix=1:length(face)
@@ -88,7 +89,6 @@ for fx=1:size(F,1)
         bF = sum(bF, 2);
         wx=find(bF);
         qq(fx,wx) = qq(fx,wx)+1;
-        qq(wx,fx) = qq(wx,fx)+1;
     end
     F(fx,:) = face;
 end

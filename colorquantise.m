@@ -1,7 +1,11 @@
 function [cq] = colorquantise(c, levs)
 % 
 
-numlevs = length(levs);
+if nargin < 2
+    ot1 = multithresh(c(c>0));
+    levs = multithresh(c(c>ot1));
+end
+
 cq=zeros(size(c));
 
 levq = 1:length(levs);

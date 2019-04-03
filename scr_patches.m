@@ -84,17 +84,37 @@ area = 1/2 * sum(sqrt(sum(c.^2, 2)));
 fprintf('\nThe surface area is %f\n\n', area);
 
 %% face adjacency
-qq=speye(size(celldata,1));
+qq=sparse(length(idx), length(idx),0);
+F = S.Faces;
 
-for fx=1:1000%size(F,1)
+fend = size(F,1);
+
+tic
+for fx=1:(size(F,1)-1)
     face = F(fx,:);
-    F(fx,:) = [-1 -1 -1];
-    for ix=1:length(face)
-        bF = F==face(ix);
-        bF = sum(bF, 2);
-        wx=find(bF);
-        qq(fx,wx) = qq(fx,wx)+1;
-    end
-    F(fx,:) = face;
+    qq = qq + sparse(fx, (fx+1):fend, ...
+        sum(ismember(F((fx+1):fend,:), face), 2)', ...
+        fend, fend);
 end
+adjmatrix = qq+qq';
+stadj = adjmatrix==2; % strong adjacency
+toc
+%% adjacency step-by-step
+qtest=sparse(length(idx), length(idx));
+%
+F = S.Faces;
+fx=1;
+fend = size(F,1);
+face = F(fx,:);
+
+
+qq = sparse(fx, (fx+1):fend, ...
+    sum(ismember(F((fx+1):fend,:), face), 2)', ...
+    length(idx), length(idx));
+
+
+qtest = qtest+qq;
+clc;
+disp(qtest);
+
 

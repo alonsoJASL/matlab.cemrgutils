@@ -1,8 +1,13 @@
 %% Read
 tidy
+if strcmp(chooseplatform, 'linux')
+    path2data = '~/data/exampledata2/';
+else
+    path2data = uigetdir('~');
+end
 
-celldata = readtable('~/data/exampledata2/eg_celldata.csv');
-pointdata = readtable('~/data/exampledata2/eg_pointdata.csv');
+celldata = readtable(fullfile(path2data,'eg_celldata.csv'));
+pointdata = readtable(fullfile(path2data,'eg_pointdata.csv'));
 %%
 scalars = celldata.Properties.VariableNames{...
     contains(lower(celldata.Properties.VariableNames), 'scalars')};

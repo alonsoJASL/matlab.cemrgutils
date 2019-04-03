@@ -68,6 +68,15 @@ figure(5)
 ps = patch(Ss);
 title('Special double threshold')
 view(-166, 6.35)
+%% 
+
+adjlowthres = faceadjacency(F, find(Ss.CData==1));
+adjhighthres = faceadjacency(F, find(Ss.CData==2));
+G = graph(adjlowthres);
+plot(G)
+spy(adjlowthres)
+Gh = graph(adjhighthres);
+plot(Gh)
 
 %% Area at a specific level
 

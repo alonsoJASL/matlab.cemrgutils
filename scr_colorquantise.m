@@ -1,4 +1,4 @@
-if strcmp(chooseplatform, 'linux')
+, if strcmp(chooseplatform, 'linux')
     path2data = '~/data/exampledata2/';
 else
     path2data = uigetdir('~');

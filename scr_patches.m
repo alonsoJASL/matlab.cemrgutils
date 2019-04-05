@@ -5,6 +5,7 @@ if strcmp(chooseplatform, 'linux')
 else
     path2data = uigetdir('~');
 end
+disp('hello')
 
 celldata = readtable(fullfile(path2data,'eg_celldata.csv'));
 pointdata = readtable(fullfile(path2data,'eg_pointdata.csv'));

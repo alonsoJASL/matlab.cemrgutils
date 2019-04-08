@@ -65,20 +65,41 @@ labeledscalars = conncomp(digraph(adjhyst));
 labeledscalars(binscalars==0) = 0;
 labeledscalars = labeledscalars';
 
-labs = unique(labeledscalars);
-labs(1) = [];
-numtri = zeros(size(labs));
-for ix=1:length(labs)
-numtri(ix) = sum(labeledscalars==labs(ix));
+% Rename the labels and reorganise per size
+nodeID = unique(labeledscalars);
+nodeID(1) = [];
+numtri = zeros(size(nodeID));
+for ix=1:length(nodeID)
+numtri(ix) = sum(labeledscalars==nodeID(ix));
 end
-[b,idx] = sort(numtri, 'descend');
-for ix=1:length(b)
-labeledscalars(labeledscalars==labs(idx(ix))) = ix;
+
+[b1,idx] = sort(numtri, 'descend');
+for ix=1:length(b1)
+labeledscalars(labeledscalars==nodeID(idx(ix))) = ix;
 end
+labs = 1:length(b1);
 
 outS = S;
 
-%% 
+%% AREA OF LESION
+
+outS.CData = labeledscalars;
+
+whichLabel = 5;
+
+faces = outS.Faces(labeledscalars==labs(whichLabel),:);
+verts = outS.Vertices;
+
+vect1 = verts(faces(:, 2), :) - verts(faces(:, 1), :);
+vect2 = verts(faces(:, 3), :) - verts(faces(:, 1), :);
+
+xprod = cross(vect1, vect2, 2);
+smallareas = (1/2).*sqrt(sum(xprod.^2, 2));
+
+area = sum(smallareas);
+fprintf('\nThe surface area is %f\n\n', area);
+
+%% DISPLAY RESULT
 figure(200)
 subplot(121)
 outS.CData = binscalars;

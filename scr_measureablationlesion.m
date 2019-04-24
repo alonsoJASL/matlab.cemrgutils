@@ -28,6 +28,8 @@ S.CData = scalars;
 S.FaceColor = 'flat';
 S.EdgeColor = 'none';
 S.FaceNormals = [celldata.Normals_0 celldata.Normals_1 celldata.Normals_2];
+numFaces = size(F,1);
+numVertices = size(vertices,1);
 
 %% SPECIAL DOUBLE THRESHOLD
 % 1.1: Otsu separating the intensities higher than zero.

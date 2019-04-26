@@ -115,6 +115,9 @@ patch(outS);
 view(-166, 6.35);
 title('Labelled lesions');
 
-%% 
+%% Blood pool
+V = niftiread(fullfile(path2data, 'ErodedROI.nii'));
+lge = niftiread(fullfile(path2data, 'dcm-LGE-3DLGE15minspostcontrast,sameTrigpulseasTIscout.nii'));
+aa = lge(V==1);
 
 

@@ -31,6 +31,7 @@ Fs = fopen(fullfile(path, 'matlabFibres', outs), 'a');
 Ft = fopen(fullfile(path, 'matlabFibres', outt), 'a');
 
 iter = 1;
+tic;
 while ~feof(Fphi_lv)
 %while iter <= 10
    phi_lv_val = fixvaluesfibres(readlinefibres(fgetl(Fphi_lv)));
@@ -76,5 +77,7 @@ while ~feof(Fphi_lv)
    
    iter = iter+1;
 end
+t = toc;
+fprintf('Time taken: %f min\n', t/60);
 fclose('all');
 disp('finished');

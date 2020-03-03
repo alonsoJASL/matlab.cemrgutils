@@ -11,3 +11,5 @@ e1 = d ./ norm(d);
 e2 = Ce * e1; 
 
 Q = [e0 e1 e2];
+
+% disp([Q Q'*Q]);

@@ -46,8 +46,8 @@ while ~feof(Fphi_lv)
     
    ratio = phi_rv_val / (phi_rv_val + phi_lv_val);
    
-   fprintf('lv:%6.6e, rv:%6.6e ratio: %6.6e | epi:%6.6e\n', ...   
-       phi_lv_val, phi_rv_val, ratio, phi_epi_val);
+%    fprintf('lv:%6.6e, rv:%6.6e ratio: %6.6e | epi:%6.6e\n', ...   
+%        phi_lv_val, phi_rv_val, ratio, phi_epi_val);
       
    grad_phi_lv = readlinefibres(fgetl(Fgrad_phi_lv));
    grad_phi_rv = readlinefibres(fgetl(Fgrad_phi_rv));
@@ -72,8 +72,11 @@ while ~feof(Fphi_lv)
    T = FST(:,3);
    
    fprintf(Ff, '%12.12e %12.12e %12.12e\n', F(1), F(2), F(3));
+%    fprintf('%12.12e %12.12e %12.12e\n', F(1), F(2), F(3));
    fprintf(Fs, '%12.12e %12.12e %12.12e\n', S(1), S(2), S(3));
+%    fprintf('%12.12e %12.12e %12.12e\n', S(1), S(2), S(3));
    fprintf(Ft, '%12.12e %12.12e %12.12e\n', T(1), T(2), T(3));
+%    fprintf('%12.12e %12.12e %12.12e\n', T(1), T(2), T(3));
    
    iter = iter+1;
 end

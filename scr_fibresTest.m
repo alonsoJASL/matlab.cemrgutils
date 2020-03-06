@@ -32,52 +32,60 @@ Ft = fopen(fullfile(path, 'matlabFibres', outt), 'a');
 
 iter = 1;
 tic;
-while ~feof(Fphi_lv)
-%while iter <= 10
+%while ~feof(Fphi_lv)
+while iter <= 2
+  disp('=========================================');
+  disp(sprintf('===================[%d]====================', iter));
+  disp('=========================================');
    phi_lv_val = fixvaluesfibres(readlinefibres(fgetl(Fphi_lv)));
    phi_rv_val = fixvaluesfibres(readlinefibres(fgetl(Fphi_rv)));
-   phi_epi_val = fixvaluesfibres(readlinefibres(fgetl(Fphi_epi))); 
-   
-   if (abs(phi_lv_val) < 1e-10 && abs(phi_rv_val) < 1e-10) 
+   phi_epi_val = fixvaluesfibres(readlinefibres(fgetl(Fphi_epi)));
+
+   if (abs(phi_lv_val) < 1e-10 && abs(phi_rv_val) < 1e-10)
        phi_lv_val = phi_lv_val + 1e-6;
        phi_rv_val = phi_rv_val + 1e-6;
        phi_epi_val = phi_epi_val - 2e-6;
    end
-    
+
    ratio = phi_rv_val / (phi_rv_val + phi_lv_val);
-   
-%    fprintf('lv:%6.6e, rv:%6.6e ratio: %6.6e | epi:%6.6e\n', ...   
-%        phi_lv_val, phi_rv_val, ratio, phi_epi_val);
-      
+
+    % fprintf('lv:%6.6e, rv:%6.6e ratio: %6.6e | epi:%6.6e\n', ...
+    %     phi_lv_val, phi_rv_val, ratio, phi_epi_val);
+
    grad_phi_lv = readlinefibres(fgetl(Fgrad_phi_lv));
    grad_phi_rv = readlinefibres(fgetl(Fgrad_phi_rv));
    grad_phi_epi = readlinefibres(fgetl(Fgrad_phi_epi));
    grad_psi = readlinefibres(fgetl(Fgrad_psi));
-      
+
    as = evalAlphafibres(ratio, alpha_endo); % alpha_s
    bs = evalBetafibres(ratio, beta_endo); % beta_s
-      
-   Qlv = orientfibres(axisfibres(grad_psi, -grad_phi_lv), as, bs); 
-   Qrv = orientfibres(axisfibres(grad_psi, grad_phi_rv), as, bs); 
-   
+   Qlv = orientfibres(axisfibres(grad_psi, -grad_phi_lv), as, bs);
+   Qrv = orientfibres(axisfibres(grad_psi, grad_phi_rv), as, bs);
+
    Qendo = bislerp(Qlv, Qrv, ratio);
-   
+   disp('[Qlv : Qrv = Qendo]');
+   disp([Qlv Qrv Qendo]);
+   disp('=========================================');
+
    aw = evalAlphafibres(ratio, alpha_epi); % alpha_w
    bw = evalBetafibres(ratio, beta_epi); % beta_w
    Qepi = orientfibres(axisfibres(grad_psi, grad_phi_epi), aw, bw);
-   
+
    FST = bislerp(Qendo, Qepi, phi_epi_val);
+   disp('[Qendo : Qepi = FST]');
+   disp([Qendo Qepi FST]);
+   disp('=========================================');
    F = FST(:,1);
    S = FST(:,2);
    T = FST(:,3);
-   
-   fprintf(Ff, '%12.12e %12.12e %12.12e\n', F(1), F(2), F(3));
-%    fprintf('%12.12e %12.12e %12.12e\n', F(1), F(2), F(3));
-   fprintf(Fs, '%12.12e %12.12e %12.12e\n', S(1), S(2), S(3));
-%    fprintf('%12.12e %12.12e %12.12e\n', S(1), S(2), S(3));
-   fprintf(Ft, '%12.12e %12.12e %12.12e\n', T(1), T(2), T(3));
-%    fprintf('%12.12e %12.12e %12.12e\n', T(1), T(2), T(3));
-   
+
+   % fprintf(Ff, '%12.12e %12.12e %12.12e\n', F(1), F(2), F(3));
+   % fprintf('%12.12e %12.12e %12.12e\n', F(1), F(2), F(3));
+   % fprintf(Fs, '%12.12e %12.12e %12.12e\n', S(1), S(2), S(3));
+   % fprintf('%12.12e %12.12e %12.12e\n', S(1), S(2), S(3));
+   % fprintf(Ft, '%12.12e %12.12e %12.12e\n', T(1), T(2), T(3));
+   % fprintf('%12.12e %12.12e %12.12e\n', T(1), T(2), T(3));
+
    iter = iter+1;
 end
 t = toc;

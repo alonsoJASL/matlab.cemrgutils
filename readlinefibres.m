@@ -1,4 +1,4 @@
-function [a] = readlinefibres(line)
+function [numbersInLine, charsInLine] = readlinefibres(line)
 % 
 
 spl = strsplit(line, ' ');
@@ -9,10 +9,14 @@ for ix=1:total
        b(ix) = 1;
     end
 end
-spl(find(b)) = [];
+spl(cast(b, 'logical')) = [];
        
-a = zeros(1, length(spl));
-for ix=1:length(a)
-    a(ix) = str2double(spl{ix});
+numbersInLine = zeros(1, length(spl));
+for ix=1:length(numbersInLine)
+    numbersInLine(ix) = str2double(spl{ix});
 end
 
+if nargout > 1
+    numbersInLine(isnan(str2double(spl))) = [];
+    charsInLine = spl(isnan(str2double(spl)));
+end

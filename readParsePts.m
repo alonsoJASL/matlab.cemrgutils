@@ -1,5 +1,7 @@
 function [vector] = readParsePts(fname)
 % Read pts file
+% [vector] = readParsePts(fname)
+%
 [path, bname, ext] = fileparts(fname);
 fi = fopen(fname);
 nPts = 0;

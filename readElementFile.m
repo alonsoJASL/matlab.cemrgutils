@@ -43,3 +43,4 @@ if nargout > 2
     region = [firstline(nCols+1);el_cell{nCols+1}];
 end
 fclose(fElem);
+end

@@ -5,9 +5,13 @@
 
 %% 1. (MATLAB) Padding images. Do on both wall and bloodpool
 
+mlog('Select the Bloodpool nii file'); pause(0.5);
 [bpname, bpdir] = uigetfile('*.*', 'Select the bloodpool');
+
+mlog('Select the Atrial wall nii file'); pause(0.5);
 [awname, awdir] = uigetfile(fullfile(bpdir, '*.*'), 'Select the atrial wall');
-padding=1;
+
+padding=3;
 
 padAndSaveNifti(fullfile(bpdir,bpname), padding);
 padAndSaveNifti(fullfile(awdir, awname), padding);

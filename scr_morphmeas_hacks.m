@@ -19,7 +19,10 @@ padAndSaveNifti(fullfile(awdir, awname), padding);
 
 %% 3. (MATLAB) Use the PVeinsLabelled.nii created by CemrgApp when clipping
 % 
+mlog('Select the PVeinsLabelled.nii'); pause(0.5);
 [labname, labdir] = uigetfile('*.*', 'Select the PVeinsLabelled');
+
+mlog('Select the (pad) atrial wall'); pause(0.5);
 [awname, awdir] = uigetfile(fullfile(labdir, '*.*'), ...
     'Select the (pad) atrial wall');
 
@@ -27,20 +30,10 @@ padAndSaveNifti(fullfile(awdir, awname), padding);
 [AW, awinfo] = readParseNifti(fullfile(awdir, awname));
 
 % check the labels
+mlog('Check the labels'); pause(0.5);
 volumeViewer(V, 'VolumeType', 'Labels');
 
-%% 3.1 change the next lines to the labels
-laa_rim = 20;
-ls_rim = 11;
-li_rim = 13;
-rs_rim = 15;
-ri_rim = 17;
-laa = 2;
-ls = 3;
-li = 4;
-rs = 6;
-ri = 5;
-
+%% clip the body
 L=V;
 L(V>10)=0; % remove rims
 L(V==1)=0; % remove body
@@ -51,19 +44,28 @@ L=L>0;
 L=imdilate(L, strel('sphere',nh));
 L=cast(2.*L, 'like', AW);
 
-AWc = AW;
-AWc((L.*AW)>1)=0;
-AWc(bwlabeln(AWc)>1) = 0;
+AWclipped_body = AW;
+AWclipped_body((L.*AW)>1)=0;
+AWclipped_body(bwlabeln(AWclipped_body)>1) = 0;
 
-volshow(AWc>0);
-%% 
-L2=imdilate(V>10, strel('sphere', nh)); % keep rims 
+%volshow(AWc>0);
+
+%% clip the rims of the PVs
+
+nh2=7;
+L2=imdilate(V>10, strel('sphere', nh2)); % keep rims 
 L2=cast(2.*L2, 'like', AW);
 
-AWc2 = AW;
-AWc2((L2.*AW)<=1)=0;
+AWclipped_rims = AW;
+AWclipped_rims((L2.*AW)<=1)=0;
 
-volumeViewer(2.*AWc2+AWc+V, 'VolumeType','Labels')
+AWclipped = 2.*AWclipped_rims+AWclipped_body;
+AWclipped(AWclipped==3) = 1;
+AWclipped(AWclipped==2) = 3;
+
+volumeViewer(AWclipped, 'VolumeType','Labels');
+
+niftiwrite(AWclipped, fullfile(labdir, 'PVeinsCropped_AWall.nii'), vinfo);
 
 %% Helper functions
 
@@ -71,7 +73,7 @@ function padAndSaveNifti(fpath, pad)
 [dir,fname,ext] = fileparts(fpath);
 [padV, ~, vinfo] = padNiftiFromFile(fpath, pad);
 
-cemrg_info(fullfile(dir, [fname '_pad' ext]));
+mlog(fullfile(dir, [fname '_pad' ext]));
 niftiwrite(padV, fullfile(dir, [fname '_pad' ext]), vinfo);
 end
 
@@ -91,4 +93,14 @@ zend=zstart+p-1;
 vinfo.ImageSize = size(padV);
 
 padV(xstart:xend, ystart:yend, zstart:zend) = V;
+end
+
+function mlog(msg, condition2print)
+if nargin < 2
+    condition2print = true;
+end
+
+if condition2print == true
+    fprintf([msg '\n']);
+end
 end
